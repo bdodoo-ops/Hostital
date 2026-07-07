@@ -2,6 +2,7 @@ package ui;
 
 import panel.*;
 import util.AppTheme;
+import model.User;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -15,6 +16,7 @@ public class MainWindow extends JFrame {
     private final CardLayout cards = new CardLayout();
     private final JPanel     content = new JPanel(cards);
     private JButton          activeNav = null;
+    private final User       currentUser;
 
     private static final Color NAV_BG       = new Color(240, 240, 240);
     private static final Color NAV_SEL      = new Color(0,  120, 215);   // Windows blue
@@ -44,8 +46,9 @@ public class MainWindow extends JFrame {
         "10. Maternal Health"
     };
 
-    public MainWindow() {
+    public MainWindow(User user) {
         super("Hospital Management System");
+        this.currentUser = user;
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1280, 780);
         setMinimumSize(new Dimension(1024, 640));
@@ -90,16 +93,42 @@ public class MainWindow extends JFrame {
         title.setForeground(Color.WHITE);
         h.add(title, BorderLayout.WEST);
 
+        JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 16, 0));
+        right.setOpaque(false);
+
+        JLabel userLbl = new JLabel(currentUser.getFullName() + "  (" + currentUser.getRole() + ")");
+        userLbl.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        userLbl.setForeground(Color.WHITE);
+        right.add(userLbl);
+
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        logoutBtn.setFocusPainted(false);
+        logoutBtn.setBorderPainted(false);
+        logoutBtn.setOpaque(true);
+        logoutBtn.setBackground(new Color(255, 255, 255, 40));
+        logoutBtn.setForeground(Color.WHITE);
+        logoutBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        logoutBtn.addActionListener(e -> logout());
+        right.add(logoutBtn);
+
         JLabel clock = new JLabel();
         clock.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         clock.setForeground(new Color(210, 230, 255));
-        h.add(clock, BorderLayout.EAST);
+        right.add(clock);
+
+        h.add(right, BorderLayout.EAST);
 
         Timer t = new Timer(1000, e ->
             clock.setText(new SimpleDateFormat("EEE, dd MMM yyyy   HH:mm:ss").format(new Date())));
         t.start();
         t.getActionListeners()[0].actionPerformed(null);
         return h;
+    }
+
+    private void logout() {
+        dispose();
+        SwingUtilities.invokeLater(LoginWindow::new);
     }
 
     // ── Sidebar ───────────────────────────────────────────────────────────────

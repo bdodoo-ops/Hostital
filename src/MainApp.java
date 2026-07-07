@@ -1,4 +1,4 @@
-import ui.MainWindow;
+import ui.LoginWindow;
 import util.AppTheme;
 
 import javax.swing.*;
@@ -12,7 +12,7 @@ public class MainApp {
         // Apply Nimbus Look-and-Feel on the Event Dispatch Thread
         SwingUtilities.invokeLater(()->{
             try { AppTheme.apply(); } catch(Exception e){ /* fall back to default L&F */ }
-            new MainWindow();
+            new LoginWindow();
         });
     }
 }

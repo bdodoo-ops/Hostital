@@ -18,6 +18,8 @@ if not exist data mkdir data
     src\util\FileUtil.java ^
     src\util\AppTheme.java ^
     src\util\Validator.java ^
+    src\util\PasswordUtil.java ^
+    src\model\User.java ^
     src\model\QueuePatient.java ^
     src\model\RecPatient.java ^
     src\model\RecDoctor.java ^
@@ -51,8 +53,10 @@ if not exist data mkdir data
     src\manager\LabManager.java ^
     src\manager\BillingManager.java ^
     src\manager\MaternalManager.java ^
+    src\manager\UserManager.java ^
     src\ui\BasePanel.java ^
     src\ui\FormDialog.java ^
+    src\ui\LoginWindow.java ^
     src\ui\MainWindow.java ^
     src\panel\QueuePanel.java ^
     src\panel\RecordsPanel.java ^
