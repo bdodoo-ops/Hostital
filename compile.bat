@@ -69,7 +69,8 @@ if not exist data mkdir data
     src\panel\BillingPanel.java ^
     src\panel\MaternalPanel.java ^
     src\panel\PatientsPanel.java ^
-    src\panel\DoctorsPanel.java
+    src\panel\DoctorsPanel.java ^
+    src\panel\UsersPanel.java
 
 if errorlevel 1 (
     echo.

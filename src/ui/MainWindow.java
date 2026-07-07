@@ -3,13 +3,16 @@ package ui;
 import panel.*;
 import util.AppTheme;
 import model.User;
+import manager.UserManager;
 
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MainWindow extends JFrame {
 
@@ -17,6 +20,7 @@ public class MainWindow extends JFrame {
     private final JPanel     content = new JPanel(cards);
     private JButton          activeNav = null;
     private final User       currentUser;
+    private final boolean    isAdmin;
 
     private static final Color NAV_BG       = new Color(240, 240, 240);
     private static final Color NAV_SEL      = new Color(0,  120, 215);   // Windows blue
@@ -24,31 +28,42 @@ public class MainWindow extends JFrame {
     private static final Color HDR_BG       = new Color(0,  120, 215);
     private static final Color MAIN_BG      = new Color(248, 248, 248);
 
-    private static final String[] IDS = {
-        "HOME",
-        "PATIENTS","DOCTORS",
-        "QUEUE","RECORDS","PHARMACY","APPOINTMENTS",
-        "BLOOD","VACCINATION","AMBULANCE","LAB","BILLING","MATERNAL"
-    };
-    private static final String[] LABELS = {
-        "Home",
-        "Patients",
-        "Doctors",
-        "1.  Queue Management",
-        "2.  Medical Records",
-        "3.  Pharmacy",
-        "4.  Appointments",
-        "5.  Blood Donation",
-        "6.  Vaccination",
-        "7.  Ambulance Dispatch",
-        "8.  Laboratory",
-        "9.  Billing & Payment",
-        "10. Maternal Health"
-    };
+    private final String[] IDS;
+    private final String[] LABELS;
 
     public MainWindow(User user) {
         super("Hospital Management System");
         this.currentUser = user;
+        this.isAdmin = "Admin".equalsIgnoreCase(user.getRole());
+
+        List<String> ids = new ArrayList<>(List.of(
+            "HOME",
+            "PATIENTS","DOCTORS",
+            "QUEUE","RECORDS","PHARMACY","APPOINTMENTS",
+            "BLOOD","VACCINATION","AMBULANCE","LAB","BILLING","MATERNAL"
+        ));
+        List<String> labels = new ArrayList<>(List.of(
+            "Home",
+            "Patients",
+            "Doctors",
+            "1.  Queue Management",
+            "2.  Medical Records",
+            "3.  Pharmacy",
+            "4.  Appointments",
+            "5.  Blood Donation",
+            "6.  Vaccination",
+            "7.  Ambulance Dispatch",
+            "8.  Laboratory",
+            "9.  Billing & Payment",
+            "10. Maternal Health"
+        ));
+        if (isAdmin) {
+            ids.add("USERS");
+            labels.add("11. User Management");
+        }
+        this.IDS = ids.toArray(new String[0]);
+        this.LABELS = labels.toArray(new String[0]);
+
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1280, 780);
         setMinimumSize(new Dimension(1024, 640));
@@ -77,6 +92,9 @@ public class MainWindow extends JFrame {
         content.add(new LabPanel(),         "LAB");
         content.add(new BillingPanel(),     "BILLING");
         content.add(new MaternalPanel(),    "MATERNAL");
+        if (isAdmin) {
+            content.add(new UsersPanel(currentUser), "USERS");
+        }
         add(content, BorderLayout.CENTER);
 
         cards.show(content, "HOME");
@@ -100,6 +118,17 @@ public class MainWindow extends JFrame {
         userLbl.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         userLbl.setForeground(Color.WHITE);
         right.add(userLbl);
+
+        JButton pwBtn = new JButton("Change Password");
+        pwBtn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        pwBtn.setFocusPainted(false);
+        pwBtn.setBorderPainted(false);
+        pwBtn.setOpaque(true);
+        pwBtn.setBackground(new Color(255, 255, 255, 40));
+        pwBtn.setForeground(Color.WHITE);
+        pwBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        pwBtn.addActionListener(e -> changePassword());
+        right.add(pwBtn);
 
         JButton logoutBtn = new JButton("Logout");
         logoutBtn.setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -129,6 +158,73 @@ public class MainWindow extends JFrame {
     private void logout() {
         dispose();
         SwingUtilities.invokeLater(LoginWindow::new);
+    }
+
+    private void changePassword() {
+        JDialog dlg = new JDialog(this, "Change Password", true);
+        dlg.setSize(380, 300);
+        dlg.setLocationRelativeTo(this);
+        dlg.setLayout(new BorderLayout(10, 10));
+
+        JPanel form = new JPanel(new GridBagLayout());
+        form.setBackground(Color.WHITE);
+        form.setBorder(BorderFactory.createEmptyBorder(18, 20, 6, 20));
+        GridBagConstraints g = new GridBagConstraints();
+        g.fill = GridBagConstraints.HORIZONTAL;
+        g.insets = new Insets(6, 0, 6, 0);
+        g.gridx = 0;
+
+        JLabel l1 = new JLabel("Current Password");
+        l1.setFont(AppTheme.FONT_LABEL);
+        g.gridy = 0; form.add(l1, g);
+        JPasswordField cur = new JPasswordField();
+        cur.setFont(AppTheme.FONT_BODY);
+        g.gridy = 1; form.add(cur, g);
+
+        JLabel l2 = new JLabel("New Password");
+        l2.setFont(AppTheme.FONT_LABEL);
+        g.gridy = 2; form.add(l2, g);
+        JPasswordField pw1 = new JPasswordField();
+        pw1.setFont(AppTheme.FONT_BODY);
+        g.gridy = 3; form.add(pw1, g);
+
+        JLabel l3 = new JLabel("Confirm New Password");
+        l3.setFont(AppTheme.FONT_LABEL);
+        g.gridy = 4; form.add(l3, g);
+        JPasswordField pw2 = new JPasswordField();
+        pw2.setFont(AppTheme.FONT_BODY);
+        g.gridy = 5; form.add(pw2, g);
+
+        JLabel errLbl = new JLabel(" ");
+        errLbl.setFont(AppTheme.FONT_SMALL);
+        errLbl.setForeground(AppTheme.DANGER);
+        g.gridy = 6; form.add(errLbl, g);
+
+        dlg.add(form, BorderLayout.CENTER);
+
+        JPanel btns = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
+        btns.setBackground(Color.WHITE);
+        JButton cancel = AppTheme.btnDanger("Cancel");
+        JButton save   = AppTheme.btnSuccess("Save");
+        btns.add(cancel); btns.add(save);
+        dlg.add(btns, BorderLayout.SOUTH);
+
+        cancel.addActionListener(e -> dlg.dispose());
+        save.addActionListener(e -> {
+            String newPw  = new String(pw1.getPassword());
+            String confPw = new String(pw2.getPassword());
+            if (newPw.isBlank()) { errLbl.setText("New password is required."); return; }
+            if (!newPw.equals(confPw)) { errLbl.setText("New passwords do not match."); return; }
+            try {
+                new UserManager().changePassword(currentUser.getId(), new String(cur.getPassword()), newPw);
+                dlg.dispose();
+                JOptionPane.showMessageDialog(this, "Password changed successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                errLbl.setText(ex.getMessage());
+            }
+        });
+        dlg.getRootPane().setDefaultButton(save);
+        dlg.setVisible(true);
     }
 
     // ── Sidebar ───────────────────────────────────────────────────────────────
