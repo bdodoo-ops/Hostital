@@ -13,7 +13,7 @@ public class UserManager {
 
     public UserManager() {
         if (users.count() == 0) {
-            User admin = new User(users.nextId(), "admin", PasswordUtil.hash("admin123"), "Administrator", "Admin");
+            User admin = new User(users.nextId(), "admin", PasswordUtil.hash("1234"), "Administrator", "Admin");
             users.add(admin);
         }
     }

@@ -83,7 +83,7 @@ public class LoginWindow extends JFrame {
         loginBtn.setPreferredSize(new Dimension(100, 36));
         g.gridy = 5; g.insets = new Insets(14, 0, 0, 0); form.add(loginBtn, g);
 
-        JLabel hint = new JLabel("Default admin login:  admin / admin123", SwingConstants.CENTER);
+        JLabel hint = new JLabel("Default admin login:  admin / 1234", SwingConstants.CENTER);
         hint.setFont(AppTheme.FONT_SMALL);
         hint.setForeground(AppTheme.TEXT_MUTED);
         g.gridy = 6; g.insets = new Insets(18, 0, 0, 0); form.add(hint, g);
