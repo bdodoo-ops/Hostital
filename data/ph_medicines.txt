@@ -1,0 +1,2 @@
+MED0001|Paracitamol|Pain Killer|Poku Pharma|1.0|10|10|2026-08-30
+MED0002|G|Analgestic|Kina|2.0|35|35|2026-08-30

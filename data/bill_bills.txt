@@ -1,0 +1,4 @@
+BILL0001|Q0001|fiifi|2026-07-06|Charge:1:200.0|200.0|Paid
+BILL0002|P0001|fiifi|2026-07-06|Queue Management: Consultation:1:250.0|250.0|Paid
+BILL0003|P0001|fiifi|2026-07-06|Pharmacy: Paracitamol x10:1:10.0|10.0|Unpaid
+BILL0004|P0001|fiifi|2026-07-06|Ambulance:1:1000.0|1000.0|Unpaid
